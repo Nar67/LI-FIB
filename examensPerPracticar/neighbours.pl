@@ -50,6 +50,7 @@ satVariable( chosen(N) ):- neighbor(N).
 
 writeClauses:- 
 	exactlyReps,
+	oneRepPerNeighborhood,
 	eachNeighbourRepresented,
 
     true,!.                    % this way you can comment out ANY previous line of writeClauses
@@ -57,16 +58,16 @@ writeClauses:- told, nl, write('writeClauses failed!'), nl,nl, halt.
 
 exactlyReps:-   numRepresentatives(K),
 				findall(chosen(N), neighbor(N), L),
-				exactly(K, L).
+				exactly(K, L), fail.
 exactlyReps.
 
-oneRepPerNeighborhood:- neighborNeighborhood(_, NH),
-						findall(chosen(N), neighbor(N))
+oneRepPerNeighborhood:- neighborNeighborhood(N1, NH), neighborNeighborhood(N2, NH),
+						N1 \= N2, writeClause( [ -chosen(N1), -chosen(N2)]), fail.
 oneRepPerNeighborhood.
 
-eachNeighbourRepresented:- neighborRepresentedBy(_,N), 
-							findall(chosen(N1), member(N1, N), L),
-							writeClause(L).
+eachNeighbourRepresented:- neighborRepresentedBy(_,NH), 
+							findall(chosen(N1), member(N1, NH), L),
+							writeClause(L), fail.
 eachNeighbourRepresented.
 %%%%%%%%%%%%%%%%%%%%%%%
 %%%%%% show the solution. Here M contains the literals that are true in the model:
